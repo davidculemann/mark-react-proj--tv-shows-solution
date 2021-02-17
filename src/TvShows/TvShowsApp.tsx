@@ -49,22 +49,22 @@ function Header() {
 
 type EpisodeListProps = { episodes: Episode[] }
 
-function EpisodeList({ episodes }: EpisodeListProps) {
+function EpisodeList(props: EpisodeListProps) {
   return (
     <div className="episode-list">
-      {episodes.map((episode) => <EpisodeCard key={episode.id} episode={episode} />)}
+      {props.episodes.map((episode) => <EpisodeCard key={episode.id} episode={episode} />)}
     </div>
   )
 }
 
 type EpisodeCardProps = { episode: Episode }
 
-function EpisodeCard({ episode }: EpisodeCardProps) {
+function EpisodeCard(props: EpisodeCardProps) {
   return (
     <div className="episode-card">
-      <h1>{episode.name} - {makeEpisodeCode(episode)}</h1>
-      <img src={episode.image.medium} alt="screengrab of episode" />
-      <p>{episode.summary}</p>
+      <h1>{props.episode.name} - {makeEpisodeCode(props.episode)}</h1>
+      <img src={props.episode.image.medium} alt="screengrab of episode" />
+      <p>{props.episode.summary}</p>
     </div>
   );
 }
