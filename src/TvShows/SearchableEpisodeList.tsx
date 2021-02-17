@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import EpisodeList from './EpisodeList';
 import Episode from './EpisodeType';
+import { makeEpisodeCode } from "./EpisodeUtils";
 
 interface SearchableEpisodeListProps {
     episodes: Episode[]
@@ -35,6 +36,13 @@ function SearchableEpisodeList(props: SearchableEpisodeListProps) {
         setFilteredEpisodes(matches);
     }, [query, allEpisodes]);
 
+    function handleEpisodeSelected(id: string) {
+        const foundEpisode = allEpisodes.find(episode => episode.id === Number(id));
+        if (foundEpisode) {
+            setFilteredEpisodes([foundEpisode]);
+        }
+    }
+
 
     return (
         <div>
@@ -54,6 +62,36 @@ function SearchableEpisodeList(props: SearchableEpisodeListProps) {
                 <div id="filterSummary" className="control">
                     {filteredEpisodes.length}
                 </div>
+
+                {/* either show the select input OR a "show all" button */}
+                {
+                    filteredEpisodes.length > 1 ?
+
+                        <select
+                            className="control"
+                            onChange={event => handleEpisodeSelected(event.target.value)}
+                            value={filteredEpisodes.length === 1 ? filteredEpisodes[0].id : ""} >
+
+                            {
+                                //create the options within the select
+                                filteredEpisodes.map(episode =>
+                                    <option
+                                        key={episode.id}
+                                        value={episode.id}>
+                                        {makeEpisodeCode(episode) + " - " + episode.name}
+                                    </option>)
+                            }
+
+                        </select>
+
+                        :
+
+                        <button
+                            className="control"
+                            onClick={() => setFilteredEpisodes(allEpisodes)}>
+                            Show all episodes
+                        </button>
+                }
             </div>
 
             <EpisodeList episodes={filteredEpisodes} />
@@ -62,8 +100,8 @@ function SearchableEpisodeList(props: SearchableEpisodeListProps) {
 }
 
 /*=============================================================================
-  ============== Pure "utility" functions - no React here ==========
-  ===========================================================================*/
+============== Pure "utility" functions - no React here ==========
+===========================================================================*/
 
 //Return the list of episodes which match the given query
 function findEpisodesMatching(query: string, episodes: Episode[]) {
