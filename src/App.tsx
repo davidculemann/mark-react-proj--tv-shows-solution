@@ -1,10 +1,10 @@
 import React from "react";
-import BabyNamesApp from "./BabyNames/BabyNamesApp";
+import TvShowsApp from "./TvShows/TvShowsApp";
 
 function App() {
   return (
     <div className="App">
-      <BabyNamesApp />
+      <TvShowsApp />
     </div>
   );
 }
