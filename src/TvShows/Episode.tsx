@@ -7,12 +7,16 @@ function EpisodeCard(props: EpisodeCardProps) {
     return (
         <div className="episode-card">
             <h1>{props.episode.name} - {makeEpisodeCode(props.episode)}</h1>
-            <img src={props.episode.image.medium} alt="screengrab of episode" />
+            <img src={imgSrcFor(props.episode)} alt="screengrab of episode" />
             <p>{stripTags(props.episode.summary)}</p>
         </div>
     );
 }
 //The above assumes all episodes have images (not true for ALL shows).
+
+function imgSrcFor(episode: Episode) {
+    return episode.image ? episode.image.medium : "https://placekitten.com/300/200";
+}
 
 //Remove tags by replacing any matching occurrences with an empty string.
 //This function uses a regular expression.  

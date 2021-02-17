@@ -17,7 +17,7 @@ export default interface Episode {
     airtime: string,
     airstamp: string,
     runtime: number,
-    image: Image,
+    image: null | Image,
     summary: string,
     _links: Links
 }
