@@ -1,4 +1,4 @@
-A sample solution to the tv shows project.  React, with TypeScript.
+A sample solution to the tv shows project.  React, with TypeScript. WIP
 
 # Getting Started with Create React App
 
