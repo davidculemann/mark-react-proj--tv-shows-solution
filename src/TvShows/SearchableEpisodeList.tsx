@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import EpisodeList from './EpisodeList';
 import Episode from './EpisodeType';
 
@@ -13,28 +13,14 @@ function SearchableEpisodeList(props: SearchableEpisodeListProps) {
     //==========================================
     //user types into search box 
     //the registered event handler calls setQuery
-    //setQuery changes query
-    //the useEffect hook notices query changed,
-    //and calls setFilteredEpisodes
-    //setFiltered episodes changes filteredEpisodes
-    //a change to filteredEpisodes causes a re-render of dependent parts of the DOM
+    //setQuery tells react to change the react-maintained state variable    
+    //a change to that state variable causes a re-render of this function component (which registered the state variable)
+    //filteredEpisodes is recomputed and redisplayed
 
     //A STATE hook: Helps maintain a search query string (from text input box)
     const [query, setQuery] = useState("");
 
-    //A STATE hook: Helps maintain a list of filtered episodes
-    //Starts will all episodes
-    const [filteredEpisodes, setFilteredEpisodes] = useState(allEpisodes);
-
-    //An EFFECT hook:
-    //Updates filteredEpisodes by filtering data by the query,
-    //This runs whenever the search query is changed (each keystroke) (and on mount)
-    //(It would also run if the main episodes list were to change.)
-    useEffect(() => {
-        const matches = findEpisodesMatching(query, allEpisodes);
-        setFilteredEpisodes(matches);
-    }, [query, allEpisodes]);
-
+    const filteredEpisodes = findEpisodesMatching(query, allEpisodes);
 
     return (
         <div>
@@ -86,7 +72,7 @@ function episodeMatchesQuery(episode: Episode, query: string) {
 function contains(a: string, b: string) {
     return (
         a && b &&
-        a.toLowerCase().indexOf(b.toLowerCase()) !== -1
+        a.toLowerCase().includes(b.toLowerCase())
     );
 }
 
