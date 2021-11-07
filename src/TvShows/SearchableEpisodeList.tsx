@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import EpisodeList from './EpisodeList';
 import Episode from './EpisodeType';
 import { makeEpisodeCode } from "./EpisodeUtils";
@@ -10,91 +10,79 @@ function SearchableEpisodeList(props: SearchableEpisodeListProps) {
 
     const allEpisodes = props.episodes;
 
-    //Explanation of main episode-search flow:
-    //==========================================
-    //user types into search box 
-    //the registered event handler calls setQuery
-    //setQuery changes query
-    //the useEffect hook notices query changed,
-    //and calls setFilteredEpisodes
-    //setFiltered episodes changes filteredEpisodes
-    //a change to filteredEpisodes causes a re-render of dependent parts of the DOM
-
-    //A STATE hook: Helps maintain a search query string (from text input box)
+    //Maintain a search query string (from text input box)
     const [query, setQuery] = useState("");
 
-    //A STATE hook: Helps maintain a list of filtered episodes
-    //Starts will all episodes
-    const [filteredEpisodes, setFilteredEpisodes] = useState(allEpisodes);
+    // Maintain a (possibly null) selected episode (from the drop-down)
+    const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
 
-    //An EFFECT hook:
-    //Updates filteredEpisodes by filtering data by the query,
-    //This runs whenever the search query is changed (each keystroke) (and on mount)
-    //(It would also run if the main episodes list were to change.)
-    useEffect(() => {
-        const matches = findEpisodesMatching(query, allEpisodes);
-        setFilteredEpisodes(matches);
-    }, [query, allEpisodes]);
+    // Compute which episode(s) should be shown
+    const episodesToShow: Episode[] = selectedEpisode ? [selectedEpisode] : findEpisodesMatching(query, allEpisodes);
+
 
     function handleEpisodeSelected(id: string) {
         const foundEpisode = allEpisodes.find(episode => episode.id === Number(id));
         if (foundEpisode) {
-            setFilteredEpisodes([foundEpisode]);
+            setSelectedEpisode(foundEpisode);
+        } else {
+            setSelectedEpisode(null);
         }
     }
-
 
     return (
         <div>
             <div id="controlPanel">
 
-                <span className="control">Filtering for </span>
+                {!selectedEpisode &&
+                    <>
+                        <span className="control">Filtering for </span>
+                        <input
+                            id="searchInput"
+                            className="control"
+                            type="text"
+                            placeholder="search within episodes..."
+                            value={query}
+                            onChange={event => setQuery(event.target.value)}
+                        />
+                    </>
+                }
 
-                <input
-                    id="searchInput"
-                    className="control"
-                    type="text"
-                    placeholder="search within episodes..."
-                    value={query}
-                    onChange={event => setQuery(event.target.value)}
-                />
-
-                <div id="filterSummary" className="control">
-                    {filteredEpisodes.length}
+                <div className="control">
+                    {selectedEpisode ?
+                        <>Selected 1 Episode</>
+                        :
+                        <>Found {episodesToShow.length} episode(s)</>
+                    }
                 </div>
 
-                {/* either show the select input OR a "show all" button */}
+                {/* either show the select input OR a "show all" button, if we've already selected one */}
                 {
-                    filteredEpisodes.length > 1 ?
-
+                    selectedEpisode ?
+                        <button
+                            className="control"
+                            onClick={() => setSelectedEpisode(null)}>
+                            Show all episodes
+                        </button>
+                        :
                         <select
                             className="control"
                             onChange={event => handleEpisodeSelected(event.target.value)}
-                            value={filteredEpisodes.length === 1 ? filteredEpisodes[0].id : ""} >
+                            value={episodesToShow.length > 0 ? episodesToShow[0].id : ""} >
 
                             {
                                 //create the options within the select
-                                filteredEpisodes.map(episode =>
+                                episodesToShow.map(episode =>
                                     <option
                                         key={episode.id}
                                         value={episode.id}>
                                         {makeEpisodeCode(episode) + " - " + episode.name}
                                     </option>)
                             }
-
                         </select>
-
-                        :
-
-                        <button
-                            className="control"
-                            onClick={() => setFilteredEpisodes(allEpisodes)}>
-                            Show all episodes
-                        </button>
                 }
             </div>
 
-            <EpisodeList episodes={filteredEpisodes} />
+            <EpisodeList episodes={episodesToShow} />
         </div>
     )
 }
@@ -124,7 +112,7 @@ function episodeMatchesQuery(episode: Episode, query: string) {
 function contains(a: string, b: string) {
     return (
         a && b &&
-        a.toLowerCase().indexOf(b.toLowerCase()) !== -1
+        a.toLowerCase().includes(b.toLowerCase())
     );
 }
 
