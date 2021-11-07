@@ -1,4 +1,4 @@
-import EpisodeCard from "./Episode";
+import EpisodeCard from "./EpisodeCard";
 import Episode from "./EpisodeType";
 
 type EpisodeListProps = { episodes: Episode[] }

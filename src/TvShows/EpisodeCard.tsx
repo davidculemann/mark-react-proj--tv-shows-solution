@@ -1,5 +1,5 @@
 import Episode from "./EpisodeType";
-import {makeEpisodeCode} from "./EpisodeUtils";
+import { makeEpisodeCode } from "./EpisodeUtils";
 
 type EpisodeCardProps = { episode: Episode }
 
