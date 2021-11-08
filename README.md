@@ -1,6 +1,8 @@
-A sample solution to the tv shows project.  React, with TypeScript. WIP
+A sample solution to the tv shows project.  React, with TypeScript.
 
-# Getting Started with Create React App
+Solutions are found in branches.
+
+# Standard Create-React-App Docs...
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
